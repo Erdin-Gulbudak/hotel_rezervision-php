@@ -3,23 +3,19 @@ $servername = "localhost";
 $username = "root";
 $password = "";
 
-// Bağlantı
 $conn = new mysqli($servername, $username, $password);
 if ($conn->connect_error) {
     die("Bağlantı hatası: " . $conn->connect_error);
 }
 
-// Veritabanını oluştur
 $sql = "CREATE DATABASE IF NOT EXISTS rezervasyondb CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
 if ($conn->query($sql) !== TRUE) {
     die("Veritabanı oluşturulamadı: " . $conn->error);
 }
 echo "Veritabanı oluşturuldu veya zaten var.<br>";
 
-// Veritabanını seç
 $conn->select_db("rezervasyondb");
 
-// Uyeler tablosu
 $sql = "CREATE TABLE IF NOT EXISTS uyeler (
     id INT AUTO_INCREMENT PRIMARY KEY,
     isim VARCHAR(100) NOT NULL,
@@ -33,7 +29,6 @@ if (!$conn->query($sql)) {
 }
 echo "Uyeler tablosu oluşturuldu veya zaten var.<br>";
 
-// Rezervasyonlar tablosu
 $sql = "CREATE TABLE IF NOT EXISTS rezervasyonlar (
     id INT AUTO_INCREMENT PRIMARY KEY,
     kullanici_id INT NOT NULL,
@@ -49,7 +44,6 @@ if (!$conn->query($sql)) {
 }
 echo "Rezervasyonlar tablosu oluşturuldu veya zaten var.<br>";
 
-// Oda stok tablosu
 $sql = "CREATE TABLE IF NOT EXISTS oda_stok (
     oda_turu VARCHAR(20) PRIMARY KEY,
     stok INT NOT NULL
@@ -59,7 +53,6 @@ if (!$conn->query($sql)) {
 }
 echo "Oda stok tablosu oluşturuldu veya zaten var.<br>";
 
-// Oda stoklarını ekle veya güncelle
 $stoklar = [
     ['suit', 5],
     ['normal', 10],
