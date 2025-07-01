@@ -10,7 +10,6 @@ if ($conn->connect_error) {
     die("Bağlantı hatası: " . $conn->connect_error);
 }
 
-// Oda stoklarını çek
 $stoklar = [];
 $stok_sonuc = $conn->query("SELECT oda_turu, stok FROM oda_stok");
 while ($row = $stok_sonuc->fetch_assoc()) {
@@ -27,18 +26,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $telefon = $_POST["telefon"];
     $kullanici_id = $_SESSION["id"];
 
-    // Stok kontrolü
     if ($stoklar[$oda_turu] <= 0) {
         $mesaj = "Seçilen oda türünde yeterli stok yok.";
     } else {
-        // Rezervasyon ekle
         $stmt = $conn->prepare("INSERT INTO rezervasyonlar (kullanici_id, isim, telefon, giris_tarihi, cikis_tarihi, oda_turu) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("isssss", $kullanici_id, $isim, $telefon, $giris, $cikis, $oda_turu);
         if ($stmt->execute()) {
-            // Stok azalt
             $conn->query("UPDATE oda_stok SET stok = stok - 1 WHERE oda_turu = '$oda_turu'");
             $mesaj = "Rezervasyonunuz başarıyla kaydedildi.";
-            // Stokları güncelle
             $stoklar[$oda_turu]--;
         } else {
             $mesaj = "Rezervasyon kaydedilirken hata oluştu.";
