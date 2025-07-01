@@ -13,7 +13,6 @@ if ($conn->connect_error) {
 $kullanici_id = $_SESSION["id"];
 $rol = $_SESSION["rol"];
 
-// Oda stoklarını çek (personel için göstermek üzere)
 $stoklar = [];
 if ($rol == "personel") {
     $stok_sonuc = $conn->query("SELECT oda_turu, stok FROM oda_stok");
@@ -22,15 +21,14 @@ if ($rol == "personel") {
     }
 }
 
-// Rezervasyonları çek
 if ($rol == "personel") {
-    // Personel tüm rezervasyonları görür
+
     $sql = "SELECT r.id, u.isim AS kullanici_adi, r.telefon, r.giris_tarihi, r.cikis_tarihi, r.oda_turu
             FROM rezervasyonlar r
             JOIN uyeler u ON r.kullanici_id = u.id
             ORDER BY r.giris_tarihi DESC";
 } else {
-    // Müşteri sadece kendi rezervasyonlarını görür
+
     $stmt = $conn->prepare("SELECT id, telefon, giris_tarihi, cikis_tarihi, oda_turu FROM rezervasyonlar WHERE kullanici_id = ? ORDER BY giris_tarihi DESC");
     $stmt->bind_param("i", $kullanici_id);
     $stmt->execute();
